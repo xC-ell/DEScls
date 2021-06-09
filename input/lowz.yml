@@ -1,0 +1,86 @@
+tracers:
+  LOWZ__0:
+    data_catalog: 'data/2MPZ.fits'
+    mask: 'data/mask_lowz_rotated.fits.gz'
+    z_edges: [0.0, 0.5]
+    path_rerun: 'data'
+    n_jk_dir: 100
+    mask_name: 'mask_LOWZ'
+    mapper_class: 'Mapper2MPZ'
+    nside: 512
+    bias: 1.182
+
+  LOWZ__1:
+    data_catalog: 'data/WIxSC.fits'
+    mask: 'data/mask_lowz_rotated.fits.gz'
+    star_map: 'data/allwise_total_rot_1024.fits'
+    spec_sample: 'data/zSpec-comp-WIxSC.csv'
+    z_edges: [0.10, 0.15]
+    bin_name: 'z0p10_0p15'
+    path_rerun: 'data'
+    n_jk_dir: 100
+    mask_name: 'mask_LOWZ'
+    mapper_class: 'MapperWIxSC'
+    nside: 512
+    bias: 1.086
+    nl_prior: 0.1
+
+  LOWZ__2:
+    data_catalog: 'data/WIxSC.fits'
+    mask: 'data/mask_lowz_rotated.fits.gz'
+    star_map: 'data/allwise_total_rot_1024.fits'
+    spec_sample: 'data/zSpec-comp-WIxSC.csv'
+    z_edges: [0.15, 0.20]
+    bin_name: 'z0p15_0p20'
+    path_rerun: 'data'
+    n_jk_dir: 100
+    mask_name: 'mask_LOWZ'
+    mapper_class: 'MapperWIxSC'
+    nside: 512
+    bias: 1.126
+    nl_prior: 0.1
+
+  LOWZ__3:
+    data_catalog: 'data/WIxSC.fits'
+    mask: 'data/mask_lowz_rotated.fits.gz'
+    star_map: 'data/allwise_total_rot_1024.fits'
+    spec_sample: 'data/zSpec-comp-WIxSC.csv'
+    z_edges: [0.20, 0.25]
+    bin_name: 'z0p20_0p25'
+    path_rerun: 'data'
+    n_jk_dir: 100
+    mask_name: 'mask_LOWZ'
+    mapper_class: 'MapperWIxSC'
+    nside: 512
+    bias: 1.144
+    nl_prior: 0.1
+
+  LOWZ__4:
+    data_catalog: 'data/WIxSC.fits'
+    mask: 'data/mask_lowz_rotated.fits.gz'
+    star_map: 'data/allwise_total_rot_1024.fits'
+    spec_sample: 'data/zSpec-comp-WIxSC.csv'
+    z_edges: [0.25, 0.30]
+    bin_name: 'z0p25_0p30'
+    path_rerun: 'data'
+    n_jk_dir: 100
+    mask_name: 'mask_LOWZ'
+    mapper_class: 'MapperWIxSC'
+    nside: 512
+    bias: 1.206
+    nl_prior: 0.1
+
+  LOWZ__5:
+    data_catalog: 'data/WIxSC.fits'
+    mask: 'data/mask_lowz_rotated.fits.gz'
+    star_map: 'data/allwise_total_rot_1024.fits'
+    spec_sample: 'data/zSpec-comp-WIxSC.csv'
+    z_edges: [0.30, 0.35]
+    bin_name: 'z0p30_0p35'
+    path_rerun: 'data'
+    n_jk_dir: 100
+    mask_name: 'mask_LOWZ'
+    mapper_class: 'MapperWIxSC'
+    nside: 512
+    bias: 1.548
+    nl_prior: 0.1

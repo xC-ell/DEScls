@@ -7,8 +7,10 @@ from .mapper_KV450 import MapperKV450
 from .mapper_KiDS1000 import MapperKiDS1000
 from .mapper_P18CMBK import MapperP18CMBK
 from .mapper_DECaLS import MapperDECaLS
+from .mapper_2MPZ import Mapper2MPZ
+from .mapper_WIxSC import MapperWIxSC
 from .mapper_dummy import MapperDummy
-from .utils import get_map_from_points
+from .utils import get_map_from_points, get_DIR_Nz
 
 
 def mapper_from_name(name):
