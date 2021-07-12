@@ -3,7 +3,7 @@ import pytest
 
 
 def test_mapper_from_name():
-    for nm in ['MapperP18CMBK', 'MappereBOSSQSO']:
+    for nm in ['MapperP18CMBK', 'MappereBOSS']:
         xc.mappers.mapper_from_name(nm)
 
     with pytest.raises(ValueError):

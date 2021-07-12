@@ -112,7 +112,7 @@ tracers:
     z_edges: [0, 1.5]
     nside: 4096
     mask_name: 'mask_QSO_0'
-    mapper_class: 'MappereBOSSQSO'
+    mapper_class: 'MappereBOSS'
     # bias obtained fitting the fiducial Cl between kmin = 0.02, kmax = 0.15
     bias: 2.1
     nl_marginalize: True
@@ -128,7 +128,7 @@ tracers:
     z_edges: [1.5, 4]
     nside: 4096
     mask_name: 'mask_QSO_1'
-    mapper_class: 'MappereBOSSQSO'
+    mapper_class: 'MappereBOSS'
     # bias obtained fitting the fiducial Cl between kmin = 0.02, kmax = 0.15
     bias: 2.5
     nl_marginalize: True

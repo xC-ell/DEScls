@@ -1,36 +1,26 @@
-from .mapper_base import MapperBase
-from .utils import get_map_from_points
-from astropy.io import fits
-from astropy.table import Table, vstack
+import os
 import numpy as np
 import healpy as hp
 import pymaster as nmt
-import os
+from astropy.io import fits
+from astropy.table import Table, vstack
+from .utils import get_map_from_points
+from .mapper_base import MapperBase
 
 
-class MappereBOSSQSO(MapperBase):
+class MapperSDSS(MapperBase):
     def __init__(self, config):
-        """
-        config - dict
-          {'data_catalogs':['eBOSS_QSO_clustering_data-NGC-vDR16.fits'],
-           'random_catalogs':['eBOSS_QSO_clustering_random-NGC-vDR16.fits'],
-           'z_edges':[0, 1.5],
-           'nside':nside,
-           'nside_mask': nside_mask,
-           'mask_name': 'mask_QSO_NGC_1'}
-        """
+        self._get_SDSS_defaults(config)
+        return
+
+    def _get_SDSS_defaults(self, config):
         self._get_defaults(config)
-
         self.cats = {'data': None, 'random': None}
-
         self.z_arr_dim = config.get('z_arr_dim', 50)
         self.nside_mask = config.get('nside_mask', 512)
         self.npix = hp.nside2npix(self.nside)
-        self.z_edges = config['z_edges']
-
         self.ws = {'data': None, 'random': None}
         self.alpha = None
-
         self.dndz = None
         self.delta_map = None
         self.nl_coupled = None
@@ -39,13 +29,13 @@ class MappereBOSSQSO(MapperBase):
                                              4096)
         self.lmin_nl_from_data = config.get('lmin_nl_from_data',
                                             2000)
+        return
 
     def get_catalog(self, mod='data'):
         if mod == 'data':
             data_file = self.config['data_catalogs']
         else:
             data_file = self.config['random_catalogs']
-
         if self.cats[mod] is None:
             cats = []
             for file in data_file:
@@ -56,18 +46,17 @@ class MappereBOSSQSO(MapperBase):
             self.cats[mod] = vstack(cats)
         return self.cats[mod]
 
-    def _bin_z(self, cat):
-        return cat[(cat['Z'] >= self.z_edges[0]) &
-                   (cat['Z'] < self.z_edges[1])]
-
-    def _get_w(self, mod='data'):
-        if self.ws[mod] is None:
-            cat = self.get_catalog(mod=mod)
-            cat_SYSTOT = np.array(cat['WEIGHT_SYSTOT'])
-            cat_CP = np.array(cat['WEIGHT_CP'])
-            cat_NOZ = np.array(cat['WEIGHT_NOZ'])
-            self.ws[mod] = cat_SYSTOT*cat_CP*cat_NOZ  # FKP left out
-        return self.ws[mod]
+    def get_nz(self, dz=0):
+        if self.dndz is None:
+            cat_data = self.get_catalog(mod='data')
+            w_data = self._get_w(mod='data')
+            h, b = np.histogram(cat_data['Z'], bins=self.z_arr_dim,
+                                weights=w_data)   # , range=[0.5, 2.5])
+            self.dndz = np.array([0.5 * (b[:-1] + b[1:]), h])
+        z, nz = self.dndz
+        z_dz = z + dz
+        sel = z_dz >= 0
+        return np.array([z_dz[sel], nz[sel]])
 
     def _get_alpha(self):
         if self.alpha is None:
@@ -75,18 +64,6 @@ class MappereBOSSQSO(MapperBase):
             w_random = self._get_w(mod='random')
             self.alpha = np.sum(w_data)/np.sum(w_random)
         return self.alpha
-
-    def get_nz(self, dz=0):
-        if self.dndz is None:
-            cat_data = self.get_catalog(mod='data')
-            w_data = self._get_w(mod='data')
-            h, b = np.histogram(cat_data['Z'], bins=self.z_arr_dim,
-                                weights=w_data, range=[0.5, 2.5])
-            self.dndz = np.array([0.5 * (b[:-1] + b[1:]), h])
-        z, nz = self.dndz
-        z_dz = z + dz
-        sel = z_dz >= 0
-        return np.array([z_dz[sel], nz[sel]])
 
     def get_signal_map(self):
         if self.delta_map is None:
@@ -148,6 +125,32 @@ class MappereBOSSQSO(MapperBase):
                 N_ell = np.mean(cl[self.lmin_nl_from_data:2*self.nside])
                 self.nl_coupled = N_ell * np.ones((1, 3*self.nside))
         return self.nl_coupled
+
+    def _bin_z(self, cat):
+        return cat[(cat['Z'] >= self.z_edges[0]) &
+                   (cat['Z'] < self.z_edges[1])]
+
+    def _get_w(self, mod='data'):
+        if self.ws[mod] is None:
+            cat = self.get_catalog(mod=mod)
+            if self.w_method == 'eBOSS':
+                w_systot = np.array(cat['WEIGHT_SYSTOT'])
+                w_cp = np.array(cat['WEIGHT_CP'])
+                w_noz = np.array(cat['WEIGHT_NOZ'])
+                self.ws[mod] = w_systot*w_cp*w_noz
+                # FKP left out
+            elif self.w_method == 'BOSS':
+                if mod == 'data':
+                    w_systot = np.array(cat['WEIGHT_SYSTOT'])
+                    w_cp = np.array(cat['WEIGHT_CP'])
+                    w_noz = np.array(cat['WEIGHT_NOZ'])
+                    w = w_systot*(w_cp+w_noz-1)
+                    # Eqn. 50 of https://arxiv.org/pdf/1509.06529.pdf
+                if mod == 'random':
+                    w = np.ones_like(cat['RA'])
+                self.ws[mod] = w  # FKP left out
+
+        return self.ws[mod]
 
     def get_dtype(self):
         return 'galaxy_density'

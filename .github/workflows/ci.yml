@@ -24,13 +24,13 @@ jobs:
           with:
             python-version: ${{ matrix.py }}
                     
-        - name: Cache pip
-          uses: actions/cache@v2
-          with:
-            # Based on: https://medium.com/ai2-blog/python-caching-in-github-actions-e9452698e98d
-            path: ${{ env.pythonLocation }}
-            # Use hashFiles to regenerate cache when adding new dependencies
-            key: ${{ env.pythonLocation }}-cache-${{ hashFiles('.github/workflows/pip-requirements.txt') }}
+        #- name: Cache pip
+        #  uses: actions/cache@v2
+        #  with:
+        #    # Based on: https://medium.com/ai2-blog/python-caching-in-github-actions-e9452698e98d
+        #    path: ${{ env.pythonLocation }}
+        #    # Use hashFiles to regenerate cache when adding new dependencies
+        #    key: ${{ env.pythonLocation }}-cache-${{ hashFiles('.github/workflows/pip-requirements.txt') }}
 
         - name: Install GSL, FFTW (linux)
           run: |
